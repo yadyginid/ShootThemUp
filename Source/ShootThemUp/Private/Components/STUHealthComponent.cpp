@@ -5,58 +5,56 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 
-DECLARE_LOG_CATEGORY_CLASS(LogHealthComponent, All ,All)
+DECLARE_LOG_CATEGORY_CLASS(LogHealthComponent, All, All)
 
 USTUHealthComponent::USTUHealthComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+    PrimaryComponentTick.bCanEverTick = false;
 }
-
 
 void USTUHealthComponent::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	SetHealth(MaxHealth);
+    SetHealth(MaxHealth);
 
-	AActor* ComponentOwner = GetOwner();
-	if(ComponentOwner)
-	{
-		ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
-	}
+    AActor* ComponentOwner = GetOwner();
+    if (ComponentOwner)
+    {
+        ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+    }
 }
 
-void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-    AController* InstigatedBy, AActor* DamageCauser)
+void USTUHealthComponent::OnTakeAnyDamage(
+    AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
+    if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
 
-	SetHealth(Health - Damage);
-	GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
-	
-	if(IsDead())
-	{
-		OnDeath.Broadcast();
-	}
-	else if(AutoHeal)
-	{
-		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
-	}
+    SetHealth(Health - Damage);
+    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+
+    if (IsDead())
+    {
+        OnDeath.Broadcast();
+    }
+    else if (AutoHeal)
+    {
+        GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
+    }
 }
 
 void USTUHealthComponent::HealUpdate()
 {
-	SetHealth(Health + HealModifier);
+    SetHealth(Health + HealModifier);
 
-	if(FMath::IsNearlyEqual(Health,MaxHealth) && GetWorld())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
-	}
+    if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+    {
+        GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+    }
 }
 
 void USTUHealthComponent::SetHealth(float NewHealth)
 {
-	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
-	OnHealthChanged.Broadcast(Health);
+    Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+    OnHealthChanged.Broadcast(Health);
 }
-
