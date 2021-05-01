@@ -24,38 +24,11 @@ void ASTUBaseWeapon::BeginPlay()
     check(WeaponMesh);
 }
 
-void ASTUBaseWeapon::StartFire()
-{
-    MakeShot();
-    GetWorldTimerManager().SetTimer(ShootTimerHandle, this, &ASTUBaseWeapon::MakeShot, TimeBetweenShots, true);
-}
+void ASTUBaseWeapon::StartFire() {}
 
-void ASTUBaseWeapon::StopFire()
-{
-    GetWorldTimerManager().ClearTimer(ShootTimerHandle);
-}
+void ASTUBaseWeapon::StopFire() {}
 
-void ASTUBaseWeapon::MakeShot()
-{
-    if (!GetWorld()) return;
-
-    FVector TraceStart, TraceEnd;
-    if (!GetTraceData(TraceStart, TraceEnd)) return;
-
-    FHitResult HitResult;
-    MakeHit(HitResult, TraceStart, TraceEnd);
-
-    if (HitResult.bBlockingHit)
-    {
-        MakeDamage(HitResult);
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
-    }
-    else
-    {
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
-    }
-}
+void ASTUBaseWeapon::MakeShot() {}
 
 APlayerController* ASTUBaseWeapon::GetPlayerController() const
 {
@@ -88,11 +61,9 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     FRotator ViewRotation;
     if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
-    const auto HalfRad = FMath::DegreesToRadians(BulletSpread);
     TraceStart = ViewLocation;  // get camera location ;
     // get camera rotation GetRotation().GetForwardVector();
-    // change direction shoot with angle
-    const FVector ShootDirection = FMath::VRandCone(ViewRotation.Vector(), HalfRad);
+    const FVector ShootDirection = ViewRotation.Vector();
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
     return true;
@@ -106,13 +77,4 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
     CollisionParams.AddIgnoredActor(GetOwner());
 
     GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
-}
-
-void ASTUBaseWeapon::MakeDamage(const FHitResult& HitResult)
-{
-    const auto DamagedActor = HitResult.GetActor();
-
-    if (!DamagedActor) return;
-
-    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }
