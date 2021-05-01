@@ -24,9 +24,15 @@ void ASTUBaseWeapon::BeginPlay()
     check(WeaponMesh);
 }
 
-void ASTUBaseWeapon::Fire()
+void ASTUBaseWeapon::StartFire()
 {
     MakeShot();
+    GetWorldTimerManager().SetTimer(ShootTimerHandle, this, &ASTUBaseWeapon::MakeShot, TimeBetweenShots, true);
+}
+
+void ASTUBaseWeapon::StopFire()
+{
+    GetWorldTimerManager().ClearTimer(ShootTimerHandle);
 }
 
 void ASTUBaseWeapon::MakeShot()
@@ -82,8 +88,11 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     FRotator ViewRotation;
     if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
-    TraceStart = ViewLocation;                             // get camera location ;
-    const FVector ShootDirection = ViewRotation.Vector();  // get camera rotation GetRotation().GetForwardVector();
+    const auto HalfRad = FMath::DegreesToRadians(BulletSpread);
+    TraceStart = ViewLocation;  // get camera location ;
+    // get camera rotation GetRotation().GetForwardVector();
+    // change direction shoot with angle
+    const FVector ShootDirection = FMath::VRandCone(ViewRotation.Vector(), HalfRad);
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
     return true;
