@@ -10,7 +10,7 @@ void ASTULauncherWeapon::StartFire()
 
 void ASTULauncherWeapon::MakeShot()
 {
-    if (!GetWorld()) return;
+    if (!GetWorld() || IsAmmoEmpty()) return;
 
     // TraceStart - character camera location/pawn eye location
     // TraceEnd - TraceStart + TraceMaxDistance
@@ -33,4 +33,6 @@ void ASTULauncherWeapon::MakeShot()
         Projectile->SetOwner(GetOwner());  // Character owner
         Projectile->FinishSpawning(SpawnTransform);
     }
+
+    DecreaseAmmo();
 }
