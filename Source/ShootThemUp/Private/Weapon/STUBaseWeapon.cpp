@@ -87,7 +87,6 @@ void ASTUBaseWeapon::DecreaseAmmo()
 
     if (CurrentAmmo.Bullets == 0)
     {
-        UE_LOG(LogBaseWeapon, Warning, TEXT("Bullet is empty"));
         return;
     }
 

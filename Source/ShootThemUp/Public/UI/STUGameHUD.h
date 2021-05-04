@@ -16,4 +16,10 @@ public:
 
 private:
     void DrawCrossHair();
+
+protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+
+    virtual void BeginPlay() override;
 };
