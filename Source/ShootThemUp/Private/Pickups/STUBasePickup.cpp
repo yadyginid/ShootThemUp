@@ -7,7 +7,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
 
 ASTUBasePickup::ASTUBasePickup()
 {
-    PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = true;
 
     CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
     CollisionComponent->InitSphereRadius(50.0f);
@@ -21,6 +21,15 @@ void ASTUBasePickup::BeginPlay()
     Super::BeginPlay();
 
     check(CollisionComponent);
+
+    GenerataRotationYaw();
+}
+
+void ASTUBasePickup::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
 }
 
 void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -55,10 +64,18 @@ void ASTUBasePickup::Respawn()
     {
         GetRootComponent()->SetVisibility(true, true);
     }
+
+    GenerataRotationYaw();
 }
 
 // can take pickup
 bool ASTUBasePickup::GivePickUpTo(APawn* PlayerPawn)
 {
     return false;
+}
+
+void ASTUBasePickup::GenerataRotationYaw()
+{
+    const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;
+    RotationYaw = FMath::FRandRange(1.0f, 2.0f) * Direction;
 }
