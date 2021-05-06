@@ -4,6 +4,9 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
+#include "Camera/CameraShake.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogHealthComponent, All, All)
 
@@ -42,6 +45,8 @@ void USTUHealthComponent::OnTakeAnyDamage(
     {
         GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
     }
+
+    PlayCameraShakeBase();
 }
 
 void USTUHealthComponent::HealUpdate()
@@ -71,4 +76,19 @@ bool USTUHealthComponent::TryToAddHealth(float HealthAmount)
 bool USTUHealthComponent::IsHealthFull() const
 {
     return FMath::IsNearlyEqual(Health, MaxHealth);
+}
+
+void USTUHealthComponent::PlayCameraShakeBase()
+{
+    if (IsDead()) return;
+
+    const auto Player = Cast<APawn>(GetOwner());
+
+    if (!Player) return;
+
+    const auto Controller = Player->GetController<APlayerController>();
+
+    if (!Controller || !Controller->PlayerCameraManager) return;
+
+    Controller->PlayerCameraManager->StartCameraShake(CameraShake);
 }
