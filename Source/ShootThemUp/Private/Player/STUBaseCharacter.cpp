@@ -61,6 +61,7 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     Super::SetupPlayerInputComponent(PlayerInputComponent);
     check(PlayerInputComponent);
     check(WeaponComponent);
+    check(GetMesh());
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
@@ -124,7 +125,7 @@ void ASTUBaseCharacter::OnDeath()
 {
     UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead"), *GetName());
 
-    PlayAnimMontage(DeathAnimMontage);
+    // PlayAnimMontage(DeathAnimMontage);
 
     GetCharacterMovement()->DisableMovement();
 
@@ -137,6 +138,9 @@ void ASTUBaseCharacter::OnDeath()
 
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     WeaponComponent->StopFire();
+
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMesh()->SetSimulatePhysics(true);
 }
 
 void ASTUBaseCharacter::OnHealthChanged(float Health)
