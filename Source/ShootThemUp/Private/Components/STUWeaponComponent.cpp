@@ -239,12 +239,23 @@ bool USTUWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
 
 bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipsAmount)
 {
-    UE_LOG(LogWeaponComponent, Display, TEXT("USTUWeaponComponent::TryToAddAmmo"));
     for (const auto Weapon : Weapons)
     {
         if (Weapon && Weapon->IsA(WeaponType))
         {
             return Weapon->TryToAddAmmo(ClipsAmount);
+        }
+    }
+    return false;
+}
+
+bool USTUWeaponComponent::NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return !Weapon->IsAmmoFull();
         }
     }
     return false;
