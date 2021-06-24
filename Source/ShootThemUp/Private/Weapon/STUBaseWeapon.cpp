@@ -136,7 +136,7 @@ void ASTUBaseWeapon::ChangeClip()
     }
 
     CurrentAmmo.Bullets = DefaultAmmo.Bullets;
-    UE_LOG(LogBaseWeapon, Display, TEXT("change clip"));
+    // UE_LOG(LogBaseWeapon, Display, TEXT("change clip"));
 }
 
 void ASTUBaseWeapon::LogAmmo()
@@ -144,7 +144,7 @@ void ASTUBaseWeapon::LogAmmo()
     FString AmmoInfo = "Ammo: " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
     AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
 
-    UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
+    // UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }
 
 bool ASTUBaseWeapon::CanReload() const
