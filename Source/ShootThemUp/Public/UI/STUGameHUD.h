@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "STUCoreTypes.h"
 #include "STUGameHUD.generated.h"
 
 UCLASS()
@@ -16,6 +17,7 @@ public:
 
 private:
     void DrawCrossHair();
+    void OnMatchStateChanged(ESTUMatchState State);
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
