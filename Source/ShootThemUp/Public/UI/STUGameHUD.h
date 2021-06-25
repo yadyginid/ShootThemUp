@@ -19,9 +19,18 @@ private:
     void DrawCrossHair();
     void OnMatchStateChanged(ESTUMatchState State);
 
+    UPROPERTY()
+    TMap<ESTUMatchState, UUserWidget*> GameWidgets;
+
+    UPROPERTY()
+    UUserWidget* CurrentWidget = nullptr;
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> PauseWidgetClass;
 
     virtual void BeginPlay() override;
 };
