@@ -14,6 +14,7 @@ void ASTUGameHUD::BeginPlay()
     // insert in map
     GameWidgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
     GameWidgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass));
+    GameWidgets.Add(ESTUMatchState::GameOver, CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass));
 
     // insert to viewport
     for (auto GameWidgetPair : GameWidgets)
