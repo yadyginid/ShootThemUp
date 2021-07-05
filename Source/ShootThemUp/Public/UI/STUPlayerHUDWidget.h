@@ -28,7 +28,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     bool IsPlayerSpectating() const;
 
-    virtual bool Initialize() override;
+    virtual void NativeOnInitialized() override;
 
     UFUNCTION(BlueprintImplementableEvent, Category = "UI")
     void OnTakeDamage();
