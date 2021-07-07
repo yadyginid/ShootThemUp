@@ -29,11 +29,7 @@ void USTUMenuWidget::NativeOnInitialized()
 
 void USTUMenuWidget::OnStartGame()
 {
-    const auto STUGameInstance = GetSTUGameInstance();
-
-    if (!STUGameInstance) return;
-
-    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
+    PlayAnimation(HideAnimation);
 }
 
 void USTUMenuWidget::OnQuitGame()
@@ -96,4 +92,16 @@ USTUGameInstance* USTUMenuWidget::GetSTUGameInstance() const
     if (!GetWorld()) return nullptr;
 
     return GetWorld()->GetGameInstance<USTUGameInstance>();
+}
+
+// call every finished any animation
+void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
+{
+    if (Animation != HideAnimation) return;
+
+    const auto STUGameInstance = GetSTUGameInstance();
+
+    if (!STUGameInstance) return;
+
+    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
 }
