@@ -4,6 +4,8 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
 #include "STUUtils.h"
+#include "Components/ProgressBar.h"
+#include "Player/STUPlayerState.h"
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
@@ -58,6 +60,8 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
     {
         OnTakeDamage();
     }
+
+    UpdateHealthBar();
 }
 
 void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
@@ -68,4 +72,41 @@ void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
     {
         HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHUDWidget::OnHealthChanged);
     }
+
+    UpdateHealthBar();
+}
+
+int32 USTUPlayerHUDWidget::GetKillsNum() const
+{
+    const auto PlayerState = GetSTUPlayerState();
+    return PlayerState ? PlayerState->GetKillsNum() : 0;
+}
+
+ASTUPlayerState* USTUPlayerHUDWidget::GetSTUPlayerState() const
+{
+    return GetOwningPlayer() ? Cast<ASTUPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
+}
+
+void USTUPlayerHUDWidget::UpdateHealthBar()
+{
+    if (HealthProgressBar)
+    {
+        HealthProgressBar->SetFillColorAndOpacity(GetHealthPercent() > PercentColorThreshold ? GoodColor : BadColor);
+    }
+}
+
+FString USTUPlayerHUDWidget::FormatBullets(int32 BulletsNum) const
+{
+    const int32 MaxLen = 3;
+    const TCHAR PrefixSymbol = '0';
+
+    auto BulletStr = FString::FromInt(BulletsNum);
+    const auto SymbolsNumToAdd = MaxLen - BulletStr.Len();
+
+    if (SymbolsNumToAdd > 0)
+    {
+        BulletStr = FString::ChrN(SymbolsNumToAdd, PrefixSymbol).Append(BulletStr);
+    }
+
+    return BulletStr;
 }
