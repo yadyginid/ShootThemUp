@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
 #include "STUCoreTypes.h"
+#include "UI/STUBaseWidget.h"
 #include "STUPlayerHUDWidget.generated.h"
 
 class UProgressBar;
 class ASTUPlayerState;
 
 UCLASS()
-class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
+class SHOOTTHEMUP_API USTUPlayerHUDWidget : public USTUBaseWidget
 {
     GENERATED_BODY()
 
@@ -54,6 +54,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FLinearColor BadColor = FLinearColor::Red;
+
+    UPROPERTY(meta = (BindWidgetAnim), Transient)
+    UWidgetAnimation* DamageAnimation;
 
 private:
     void OnHealthChanged(float Health, float HealthDelta);
