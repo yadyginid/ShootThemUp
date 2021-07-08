@@ -8,6 +8,7 @@
 #include "Camera/CameraShake.h"
 #include "STUGameModeBase.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Perception/AISense_Damage.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogHealthComponent, All, All)
 
@@ -92,16 +93,16 @@ void USTUHealthComponent::Killed(AController* KillerController)
     GameMode->Killed(KillerController, VictimController);
 }
 
-void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy,
-    FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
-    const class UDamageType* DamageType, AActor* DamageCauser)
+void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation,
+    class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType,
+    AActor* DamageCauser)
 {
-    const auto FinalDamage = Damage* GetPointDamageModifier(DamagedActor, BoneName); 
+    const auto FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
     ApplyDamage(FinalDamage, InstigatedBy);
 }
 
-void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage,
-    const class UDamageType* DamageType, FVector Origin, FHitResult HitInfo, class AController* InstigatedBy, AActor* DamageCauser)
+void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin,
+    FHitResult HitInfo, class AController* InstigatedBy, AActor* DamageCauser)
 {
     ApplyDamage(Damage, InstigatedBy);
 }
@@ -129,15 +130,28 @@ void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
     }
 
     PlayCameraShakeBase();
+    ReportDamageEvent(Damage, InstigatedBy);
 }
 
-float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName) 
+float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName)
 {
     const auto Character = Cast<ACharacter>(DamagedActor);
-    if(!Character) return 1.0f;
+    if (!Character) return 1.0f;
 
     const auto PhysMaterial = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
-    if(!DamageModifiers.Contains(PhysMaterial) || !PhysMaterial) return 1.0f;
+    if (!DamageModifiers.Contains(PhysMaterial) || !PhysMaterial) return 1.0f;
 
     return DamageModifiers[PhysMaterial];
+}
+
+void USTUHealthComponent::ReportDamageEvent(float Damage, AController* InstigatedBy)
+{
+    if (!InstigatedBy || !InstigatedBy->GetPawn() || !GetOwner()) return;
+
+    UAISense_Damage::ReportDamageEvent(GetWorld(),    //
+        GetOwner(),                                   //
+        InstigatedBy->GetPawn(),                      //
+        Damage,                                       //
+        InstigatedBy->GetPawn()->GetActorLocation(),  //
+        GetOwner()->GetActorLocation());
 }
