@@ -22,6 +22,8 @@ public:
     virtual void StartFire() override;
     virtual void StopFire() override;
 
+    virtual void Zoom(bool Enabled) override;
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     float TimeBetweenShots = 0.1f;
@@ -40,6 +42,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
     FString TraceTargetName = "TraceTarget";
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+    float FOVZoomAngle = 50.0f;
 
     virtual void BeginPlay() override;
     virtual void MakeShot() override;
@@ -61,4 +66,6 @@ private:
     void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 
     AController* GetController() const;
+
+    float DefaultCameraFOV = 90.0f;
 };

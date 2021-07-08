@@ -58,6 +58,10 @@ void ASTUPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
     PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
     PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
+
+    DECLARE_DELEGATE_OneParam(FZoomInoutSignature, bool);
+    PlayerInputComponent->BindAction<FZoomInoutSignature>("Zoom", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Zoom, true);
+    PlayerInputComponent->BindAction<FZoomInoutSignature>("Zoom", IE_Released, WeaponComponent, &USTUWeaponComponent::Zoom, false);
 }
 
 // move
@@ -118,11 +122,11 @@ void ASTUPlayerCharacter::CheckCameraOverlap()
     TArray<USceneComponent*> MeshChildren;
     GetMesh()->GetChildrenComponents(true, MeshChildren);
 
-    for(auto MeshChild: MeshChildren)
+    for (auto MeshChild : MeshChildren)
     {
         const auto MeshChildrenGeometry = Cast<UPrimitiveComponent>(MeshChild);
 
-        if(MeshChildrenGeometry)
+        if (MeshChildrenGeometry)
         {
             MeshChildrenGeometry->SetOwnerNoSee(HideMesh);
         }

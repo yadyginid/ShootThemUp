@@ -60,7 +60,7 @@ bool ASTUBaseCharacter::IsRunning() const
 
 void ASTUBaseCharacter::OnDeath()
 {
-    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead"), *GetName());
+    // UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead"), *GetName());
 
     // PlayAnimMontage(DeathAnimMontage);
 
@@ -70,6 +70,7 @@ void ASTUBaseCharacter::OnDeath()
 
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     WeaponComponent->StopFire();
+    WeaponComponent->Zoom(false);
 
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMesh()->SetSimulatePhysics(true);
