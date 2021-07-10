@@ -23,6 +23,9 @@ public:
     // Sets default values for this character's properties
     ASTUBaseCharacter(const FObjectInitializer& ObjInit);
 
+    virtual void TurnOff() override;
+    virtual void Reset() override;
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
