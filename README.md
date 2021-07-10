@@ -13,7 +13,7 @@ Use:
 * Respawn AI and Main Character
 
 Control:
-LMB - fire on
-RMB - Zoom
-Tab - Change weapon
-Сpace - jump
+* LMB - fire on
+* RMB - Zoom
+* Tab - Change weapon
+* СPACE - jump
