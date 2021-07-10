@@ -76,4 +76,5 @@ DerivedDataCache/*
 
 .idea/
 
-!Game/
+!Game/**/
+!Game/WindowsNoEditor/**
