@@ -1,6 +1,6 @@
 # ShootThemUp
-ABout:
-Single shooter where two teams fight.
+About:
+*Single shooter where two teams fight.
 
 Use:
 * mostly written in Unreal C++. 
